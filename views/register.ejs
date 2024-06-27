@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div>
+    <h1>Register</h1>
+    <% if (error_msg) { %>
+      <div class="alert alert-danger">
+        <%= error_msg %>
+      </div>
+    <% } %>
+    <% if (success_msg) { %>
+      <div class="alert alert-success">
+        <%= success_msg %>
+      </div>
+    <% } %>
+    <form action="/register" method="POST">
+      <label for="firstname">Firstname:</label>
+      <input type="text" autocomplete="given-name" name="first_name" id="firstname" required>
+      
+      <label for="lastname">Lastname:</label>
+      <input type="text" autocomplete="family-name" name="last_name" id="lastname" required>
+      
+      <label for="date_of_birth">Date of birth:</label>
+      <input type="date" autocomplete="bday" name="date_of_birth" id="dob" required>
+      
+      <label for="pin">Enter a 4 digits PIN:</label>
+      <input type="text" inputmode="numeric" minlenght="4"maxlength="4" name="pin" id="pin-input" required>
+      
+      <button type="submit">Register</button>
+    </form>
+  </div>
+</body>
+</html>
