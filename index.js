@@ -1,9 +1,12 @@
+const dotenv = require('dotenv')
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
 const Controller = require('./controller');
-const port = 3000;
+
+dotenv.config()
+const port = process.env.PORT ||3000;
 
 const app = express();
 
