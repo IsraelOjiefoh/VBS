@@ -1,24 +1,27 @@
-const { isAlpha } = require('./validators');
+const { isAlpha,
+       isValidEmail } = require("./validators");
 
 const renderWithErrors = (req, res, errors, data) => {
-  res.render('register', { errors, ...data });
+  res.render("register", { errors, ...data });
 };
 
 exports.getRegister = (req, res) => {
-  res.render('register', { errors: [], first_name: '', last_name: '', date_of_birth: '', email: '' });
+  res.render("register", {
+    errors: [],
+    first_name: "",
+    last_name: "",
+    email: "",
+  });
 };
 
 exports.postRegister = (req, res) => {
-  const { first_name, last_name, date_of_birth, email } = req.body;
+  const { first_name, last_name, is_over_18, email } = req.body;
   let errors = [];
 
-  // Validate email format using regex
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
   // Check for missing fields
-  if (!first_name || !last_name || !date_of_birth || !email) {
+  if (!first_name || !last_name || !is_over_18 || !email) {
     errors.push({ msg: "Please fill all the fields" });
-     renderWithErrors(req, res, errors, { first_name, last_name, date_of_birth, email });
+
   }
 
   // Validate first name
@@ -34,20 +37,39 @@ exports.postRegister = (req, res) => {
     errors.push({ msg: "Last Name should contain only letters" });
   }
 
-  
   if (last_name.length < 2 || last_name.length > 30) {
     errors.push({ msg: "Last Name must be between 2 and 30 letters" });
   }
 
   // Validate email
-  if (!emailRegex.test(email)) {
+  if (!isValidEmail(email)) {
     errors.push({ msg: "Invalid Email Address Format" });
   }
 
   // Render errors or success message
   if (errors.length > 0) {
-     renderWithErrors(req, res, errors, { first_name, last_name, date_of_birth, email });
-  }else{
-    res.send("Successful ")
+    renderWithErrors(req, res, errors, {
+      first_name,
+      last_name,
+      is_over_18,
+      email,
+    });
+  } 
+  // Check if the user confirmed they are 18 or older
+  if (!is_over_18) {
+    errors.push({ msg: 'You must confirm that you are 18 years or older' });
+    renderWithErrors(req, res, errors, {
+      first_name,
+      last_name,
+      is_over_18,
+      email,
+    });
+  
   }
-}
+    
+
+    
+  else {
+    res.send("Successful ");
+  }
+};
