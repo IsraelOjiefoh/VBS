@@ -9,16 +9,13 @@
 <body>
   <div>
     <h1>Register</h1>
-    <% if (error_msg) { %>
-      <div class="alert alert-danger">
-        <%= error_msg %>
-      </div>
-    <% } %>
-    <% if (success_msg) { %>
-      <div class="alert alert-success">
-        <%= success_msg %>
-      </div>
-    <% } %>
+    <% if (errors.length > 0) { %>
+  <div class="alert alert-danger">
+    <% errors.forEach((error) => { %>
+      <p><%= error.msg %></p>
+    <% }) %>
+  </div>
+<% } %>
     <form action="/register" method="POST">
       <label for="firstname">Firstname:</label>
       <input type="text" autocomplete="given-name" name="first_name" id="firstname" required>
@@ -29,8 +26,8 @@
       <label for="date_of_birth">Date of birth:</label>
       <input type="date" autocomplete="bday" name="date_of_birth" id="dob" required>
       
-      <label for="pin">Enter a 4 digits PIN:</label>
-      <input type="text" inputmode="numeric" minlenght="4"maxlength="4" name="pin" id="pin-input" required>
+      <label for="email">Enter your email:</label>
+      <input type="email" name="email" id="email" required>
       
       <button type="submit">Register</button>
     </form>

@@ -36,7 +36,7 @@ label {
 }
 
 input[type="text"],
-input[type="password"],
+input[type="email"],
 input[type="tel"],
 .flatpickr-input {
   padding: 10px;
@@ -47,7 +47,7 @@ input[type="tel"],
 }
 
 input[type="text"]:focus,
-input[type="password"]:focus,
+input[type="email"]:focus,
 input[type="tel"]:focus,
 .flatpickr-input:focus {
   border-color: #007bff;

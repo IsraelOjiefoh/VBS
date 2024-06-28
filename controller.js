@@ -1,28 +1,31 @@
+const errors = []
 exports.getRegister = (req, res) => {
-  const error_msg = req.flash('error_msg');
-  if (error_msg.length > 0) {
-    res.render('register', { error_msg });
-  } else {
-    res.render('register', { error_msg: null });
-  }
+    res.render('register', {errors});
+
 };
 
 exports.postRegister = (req, res) => {
-  const { first_name, last_name, date_of_birth, pin } = req.body;
+  const { first_name, last_name, date_of_birth, email} = req.body;
+
+  
+ // Validate email format using regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const UserEmail = req.body.email
 
   // Check for missing fields
-  if (!first_name || !last_name || !date_of_birth || !pin) {
-    req.flash('error_msg', "Please fill all the fields");
+  if (!first_name || !last_name || !date_of_birth || !email) {
+    errors.push({msg: "Please fill all the fields"});
     return res.redirect('/register');
   }
-
-  // Check if the PIN is exactly 4 digits
-  if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
-    req.flash('error_msg', "Pin must be exactly 4 digits");
-    return res.redirect('/register');
+  
+  if(!emailRegex.test(UserEmail)){
+     errors.push({msg:'Invalid Email Address Format'})
+    if(errors.length > 0){
+      res.render('register', {errors, first_name, last_name, date_of_birth, email} )
+    }
+    
+  }else{
+    res.send("Successful ")
   }
 
-  // If all checks pass, render the success page
-  req.flash('success_msg', "Registration successful");
-  res.render('success',{first_name, last_name,date_of_birth,pin});
 };
