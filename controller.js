@@ -1,8 +1,7 @@
-// Import validation functions
+// Import necessary modules
 const { isAlpha, isValidEmail } = require('./validators');
-
-// Import the function to send confirmation emails
 const { sendConfirmationEmail } = require('./mailer');
+const { ObjectId } = require('mongodb');
 
 // Function to generate a random 6-digit confirmation code
 function generateConfirmationCode() {
@@ -25,7 +24,7 @@ exports.getRegister = (req, res) => {
 };
 
 // Controller function to handle registration form submission
-exports.postRegister = (req, res) => {
+exports.postRegister = async (req, res) => {
     const { first_name, last_name, is_over_18, email } = req.body;
 
     let errors = [];
@@ -71,34 +70,50 @@ exports.postRegister = (req, res) => {
         });
     }
 
-    // Generate a confirmation code
-    const confirmationCode = generateConfirmationCode();
-    req.session.confirmationCode = confirmationCode;
-    req.session.email = email;
+    // Save user data to MongoDB
+    try {
+        const usersCollection = req.app.locals.db.collection('users');
+        const newUser = {
+            first_name,
+            last_name,
+            email,
+            is_over_18: Boolean(is_over_18),
+            registration_date: new Date(),
+        };
+        const result = await usersCollection.insertOne(newUser);
+        console.log('User registered:', result.insertedId);
 
-    // Send confirmation email
-    sendConfirmationEmail(email, confirmationCode)
-        .then(info => {
-            console.log('Confirmation email sent:', info.messageId);
-            res.redirect('/confirm-email'); // Redirect to email confirmation page
-        })
-        .catch(error => {
-            console.error('Failed to send confirmation email:', error);
-            req.flash('errors', { msg: 'Failed to send confirmation email' });
-            res.redirect('/register'); // Redirect back to registration page on error
-        });
+        // Generate a confirmation code and store it in the session
+        const confirmationCode = generateConfirmationCode();
+        req.session.confirmationCode = confirmationCode;
+        req.session.email = email;
+
+        // Send confirmation email
+        sendConfirmationEmail(email, confirmationCode)
+            .then(info => {
+                console.log('Confirmation email sent:', info.messageId);
+                res.redirect('/confirm-email');
+            })
+            .catch(error => {
+                console.error('Failed to send confirmation email:', error);
+                req.flash('errors', { msg: 'Failed to send confirmation email' });
+                res.redirect('/register');
+            });
+    } catch (err) {
+        console.error('Error registering user:', err);
+        req.flash('errors', { msg: 'Failed to register user' });
+        res.redirect('/register');
+    }
 };
 
 // Controller function to handle email confirmation form submission
-exports.postConfirmationEmail = (req, res) => {
+exports.postConfirmationEmail = async (req, res) => {
     const { code } = req.body;
     let errors = [];
 
     // Check if the provided code matches the one in the session
     if (code !== req.session.confirmationCode) {
-        
         errors.push({ msg: 'Invalid confirmation code.' });
-        console.log(errors)
     }
 
     // If there are errors, redirect back to confirmation page with error message
@@ -107,18 +122,22 @@ exports.postConfirmationEmail = (req, res) => {
         return res.redirect('/confirm-email');
     }
 
-    // If code is correct, proceed with email confirmation logic
-    // Mark email as verified in the database, etc.
+    // Update user record in MongoDB to mark email as verified
+    try {
+        const usersCollection = req.app.locals.db.collection('users');
+        const emailToUpdate = req.session.email;
+        const updateResult = await usersCollection.updateOne(
+            { email: emailToUpdate },
+            { $set: { email_verified: true } }
+        );
+        console.log('Email verified for:', emailToUpdate);
 
-    // Destroy the session after processing
-    req.session.destroy((err) => {
-        if (err) {
-            console.log('Error destroying session:', err);
-        } else {
-            console.log('Session destroyed.');
-        }
-    });
+        req.session.destroy(); // Destroy session after processing
 
-    // Redirect to success page or do further processing
-    res.send('Email Confirmed Successfully.');
-};
+        res.redirect('/thank-you');
+    } catch (err) {
+        console.error('Error confirming email:', err);
+        req.flash('errors', { msg: 'Failed to confirm email' });
+        res.redirect('/confirm-email');
+    }
+}

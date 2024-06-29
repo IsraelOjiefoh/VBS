@@ -1,9 +1,9 @@
-// Import required modules
 const dotenv = require('dotenv');
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
+const { MongoClient } = require('mongodb');
 const Controller = require('./controller');
 
 // Load environment variables from .env file
@@ -26,9 +26,9 @@ app.use(express.static('public'));
 
 // Middleware to manage sessions
 app.use(session({
-    secret: 'your-secret-key', // Secret key to sign the session ID cookie
-    resave: false, // Do not save the session if it hasn't been modified
-    saveUninitialized: true, // Save a new session that hasn't been initialized
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
 }));
 
 // Middleware to handle flash messages
@@ -40,24 +40,47 @@ app.use((req, res, next) => {
     next();
 });
 
-// Route to render the home page
-app.get('/', (req, res) => res.render('index'));
+// MongoDB connection setup
+const uri = 'mongodb+srv://israelmayowa580:69RJ6WY3wXv1IajM@cluster0.mpwqrgu.mongodb.net/mydatabase?retryWrites=true&w=majority&appName=Cluster0';
+const client = new MongoClient(uri);
 
-// Route to render the registration form
-app.get('/register', Controller.getRegister);
+async function connectToMongoDB() {
+    try {
+        await client.connect();
+        console.log('Connected to MongoDB');
+        app.locals.db = client.db('mydatabase'); // Make the database available to the app
 
-// Route to handle registration form submission
-app.post('/register', Controller.postRegister);
+        // Routes should be defined after successful DB connection
 
-// Route to render the email confirmation form
-app.get('/confirm-email', (req, res) => {
-    res.render('confirm-email');
+        // Route to render the home page
+        app.get('/', (req, res) => res.render('index'));
+
+        // Route to render the registration form
+        app.get('/register', Controller.getRegister);
+
+        // Route to handle registration form submission
+        app.post('/register', Controller.postRegister);
+
+        // Route to render the email confirmation form
+        app.get('/confirm-email', (req, res) => {
+            res.render('confirm-email');
+        });
+
+        // Route to handle email confirmation form submission
+        app.post('/confirm-email', Controller.postConfirmationEmail);
+
+        app.get('/thank-you', (req, res) => {
+    res.render('thank-you'); 
 });
+        // Start the server and listen on the specified port
+        app.listen(port, () => {
+            console.log(`App listening at http://localhost:${port}`);
+        });
+    } catch (err) {
+        console.error('Error connecting to MongoDB:', err);
+        process.exit(1); // Exit the process with failure
+    }
+}
 
-// Route to handle email confirmation form submission
-app.post('/confirm-email', Controller.postConfirmationEmail);
-
-// Start the server and listen on the specified port
-app.listen(port, () => {
-    console.log(`App listening at http://localhost:${port}`);
-});
+// Call the function to connect to MongoDB
+connectToMongoDB();
