@@ -1,75 +1,115 @@
-const { isAlpha,
-       isValidEmail } = require("./validators");
+// Import validation functions
+const { isAlpha, isValidEmail } = require('./validators');
 
+// Import the function to send confirmation emails
+const { sendConfirmationEmail } = require('./mailer');
+
+// Function to generate a random 6-digit confirmation code
+function generateConfirmationCode() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+// Function to render the registration form with errors and previously entered data
 const renderWithErrors = (req, res, errors, data) => {
-  res.render("register", { errors, ...data });
+    res.render('register', { errors, ...data });
 };
 
+// Controller function to render the registration page
 exports.getRegister = (req, res) => {
-  res.render("register", {
-    errors: [],
-    first_name: "",
-    last_name: "",
-    email: "",
-  });
+    res.render('register', {
+        errors: [], // Initialize with no errors
+        first_name: '', // Initialize with empty first name
+        last_name: '', // Initialize with empty last name
+        email: '', // Initialize with empty email
+    });
 };
 
+// Controller function to handle registration form submission
 exports.postRegister = (req, res) => {
-  const { first_name, last_name, is_over_18, email } = req.body;
-  let errors = [];
+    const { first_name, last_name, is_over_18, email } = req.body;
 
-  // Check for missing fields
-  if (!first_name || !last_name || !is_over_18 || !email) {
-    errors.push({ msg: "Please fill all the fields" });
+    let errors = [];
 
-  }
+    // Check for missing fields
+    if (!first_name || !last_name || !is_over_18 || !email) {
+        errors.push({ msg: 'Please fill all the fields' });
+    }
 
-  // Validate first name
-  if (!isAlpha(first_name)) {
-    errors.push({ msg: "First Name should contain only letters" });
-  }
-  if (first_name.length < 2 || first_name.length > 20) {
-    errors.push({ msg: "First Name must be between 2 and 20 letters" });
-  }
+    // Validate first name
+    if (!isAlpha(first_name)) {
+        errors.push({ msg: 'First Name should contain only letters' });
+    }
+    if (first_name.length < 2 || first_name.length > 20) {
+        errors.push({ msg: 'First Name must be between 2 and 20 letters' });
+    }
 
-  // Validate last name
-  if (!isAlpha(last_name)) {
-    errors.push({ msg: "Last Name should contain only letters" });
-  }
+    // Validate last name
+    if (!isAlpha(last_name)) {
+        errors.push({ msg: 'Last Name should contain only letters' });
+    }
+    if (last_name.length < 2 || last_name.length > 30) {
+        errors.push({ msg: 'Last Name must be between 2 and 30 letters' });
+    }
 
-  if (last_name.length < 2 || last_name.length > 30) {
-    errors.push({ msg: "Last Name must be between 2 and 30 letters" });
-  }
+    // Validate email
+    if (!isValidEmail(email)) {
+        errors.push({ msg: 'Invalid Email Address Format' });
+    }
 
-  // Validate email
-  if (!isValidEmail(email)) {
-    errors.push({ msg: "Invalid Email Address Format" });
-  }
+    // Check if the user confirmed they are 18 or older
+    if (!is_over_18) {
+        errors.push({ msg: 'You must confirm that you are 18 years or older' });
+    }
 
-  // Render errors or success message
-  if (errors.length > 0) {
-    renderWithErrors(req, res, errors, {
-      first_name,
-      last_name,
-      is_over_18,
-      email,
+    // Render errors or proceed with registration
+    if (errors.length > 0) {
+        return renderWithErrors(req, res, errors, {
+            first_name,
+            last_name,
+            is_over_18,
+            email,
+        });
+    }
+
+    // Generate a confirmation code
+    const confirmationCode = generateConfirmationCode();
+    req.session.confirmationCode = confirmationCode;
+    req.session.email = email;
+
+    // Send confirmation email
+    sendConfirmationEmail(email, confirmationCode)
+        .then(info => {
+            console.log('Confirmation email sent:', info.messageId);
+            res.redirect('/confirm-email'); // Redirect to email confirmation page
+        })
+        .catch(error => {
+            console.error('Failed to send confirmation email:', error);
+            req.flash('errors', { msg: 'Failed to send confirmation email' });
+            res.redirect('/register'); // Redirect back to registration page on error
+        });
+};
+
+// Controller function to handle email confirmation form submission
+exports.postConfirmationEmail = (req, res) => {
+    const { code } = req.body;
+    let errors = [];
+
+    // Check if the provided code matches the one in the session
+    if (code === req.session.confirmationCode) {
+        res.send('Email Confirmed Successfully.');
+        // Here you would typically mark the user's email as verified in the database
+    } else {
+        errors.push({ msg: 'Invalid confirmation code.' });
+        req.flash('errors', errors);
+        res.redirect('/confirm-email'); // Redirect back to email confirmation page on error
+    }
+
+    // Destroy the session after processing
+    req.session.destroy((err) => {
+        if (err) {
+            console.log('Error destroying session:', err);
+        } else {
+            console.log('Session destroyed.');
+        }
     });
-  } 
-  // Check if the user confirmed they are 18 or older
-  if (!is_over_18) {
-    errors.push({ msg: 'You must confirm that you are 18 years or older' });
-    renderWithErrors(req, res, errors, {
-      first_name,
-      last_name,
-      is_over_18,
-      email,
-    });
-  
-  }
-    
-
-    
-  else {
-    res.send("Successful ");
-  }
 };

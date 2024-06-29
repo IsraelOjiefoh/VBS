@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/confirm-email.css">
+  <title>Email Confirmation</title>
+</head>
+<body>
+  <div>
+    <h1>Confirm Your Email</h1>
+
+    <% if (errors.length > 0) { %>
+      <div class="alert alert-danger">
+        <% errors.forEach((error) => { %>
+          <p><%= error.msg %></p>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <form action="/confirm-email" method="POST">
+      <label for="code">Confirmation Code:</label>
+      <input type="number" id="code" name="code" required pattern="[0-9]{1,6}" maxlength="6" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);">
+      <button type="submit">Confirm</button>
+    </form>
+  </div>
+</body>
+    </html>
