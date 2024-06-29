@@ -95,14 +95,20 @@ exports.postConfirmationEmail = (req, res) => {
     let errors = [];
 
     // Check if the provided code matches the one in the session
-    if (code === req.session.confirmationCode) {
-        res.send('Email Confirmed Successfully.');
-        // Here you would typically mark the user's email as verified in the database
-    } else {
+    if (code !== req.session.confirmationCode) {
+        
         errors.push({ msg: 'Invalid confirmation code.' });
-        req.flash('errors', errors);
-        res.redirect('/confirm-email'); // Redirect back to email confirmation page on error
+        console.log(errors)
     }
+
+    // If there are errors, redirect back to confirmation page with error message
+    if (errors.length > 0) {
+        req.flash('errors', errors);
+        return res.redirect('/confirm-email');
+    }
+
+    // If code is correct, proceed with email confirmation logic
+    // Mark email as verified in the database, etc.
 
     // Destroy the session after processing
     req.session.destroy((err) => {
@@ -112,4 +118,7 @@ exports.postConfirmationEmail = (req, res) => {
             console.log('Session destroyed.');
         }
     });
+
+    // Redirect to success page or do further processing
+    res.send('Email Confirmed Successfully.');
 };

@@ -10,11 +10,19 @@
   <div>
     <h1>Register</h1>
     <% if (errors.length > 0) { %>
-  <div class="alert alert-danger">
-    <% errors.forEach((error) => { %>
+  <div id="error-messages" class="alert alert-danger">
+    <% errors.forEach((error, index) => { %>
       <p><%= error.msg %></p>
     <% }) %>
   </div>
+  <script>
+    setTimeout(function() {
+      var errorMessages = document.getElementById('error-messages');
+      if (errorMessages) {
+        errorMessages.remove();
+      }
+    }, 3000); // 3000 milliseconds = 2 seconds
+  </script>
 <% } %>
     <form action="/register" method="POST">
       <label for="firstname">Firstname:</label>
