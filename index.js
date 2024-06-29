@@ -41,7 +41,7 @@ app.use((req, res, next) => {
 });
 
 // MongoDB connection setup
-const uri = 'mongodb+srv://israelmayowa580:69RJ6WY3wXv1IajM@cluster0.mpwqrgu.mongodb.net/mydatabase?retryWrites=true&w=majority&appName=Cluster0';
+const uri = process.env.URI;
 const client = new MongoClient(uri);
 
 async function connectToMongoDB() {
