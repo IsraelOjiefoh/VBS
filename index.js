@@ -69,9 +69,7 @@ async function connectToMongoDB() {
         // Route to handle email confirmation form submission
         app.post('/confirm-email', Controller.postConfirmationEmail);
 
-        app.get('/thank-you', (req, res) => {
-    res.render('thank-you'); 
-});
+        app.get('/thank-you', Controller.thankYou);
         // Start the server and listen on the specified port
         app.listen(port, () => {
             console.log(`App listening at http://localhost:${port}`);

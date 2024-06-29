@@ -130,9 +130,7 @@ exports.postConfirmationEmail = async (req, res) => {
             { email: emailToUpdate },
             { $set: { email_verified: true } }
         );
-        console.log('Email verified for:', emailToUpdate);
-
-        req.session.destroy(); // Destroy session after processing
+        console.log('Email verified for:', emailToUpdate)
 
         res.redirect('/thank-you');
     } catch (err) {
@@ -140,4 +138,13 @@ exports.postConfirmationEmail = async (req, res) => {
         req.flash('errors', { msg: 'Failed to confirm email' });
         res.redirect('/confirm-email');
     }
+
+    
+}
+
+exports.thankYou = (req, res) =>{
+    userEmail = req.session.email
+
+    // Render the "thank you" page with user email
+        res.render('thank-you', {userEmail});
 }
