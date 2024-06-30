@@ -72,6 +72,11 @@ app.post('/confirm-email', Controller.postConfirmationEmail);
 // Route for success page
 app.get('/success', Controller.success);
 
+// Route for login page 
+app.get('/login', (req, res)=>{
+    res.render('login')
+})
+
 // Start the server and listen on the specified port
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);

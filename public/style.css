@@ -86,3 +86,14 @@ button:hover {
   background-color: #d4edda;
   color: #155724;
 }
+
+    .login-cta {
+        display: inline-block;
+        padding: 10px 20px;
+        color: blue;
+        text-decoration: none;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 16px;
+        
+    }

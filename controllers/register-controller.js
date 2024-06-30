@@ -67,7 +67,9 @@ exports.postRegister = async (req, res) => {
   //check if email is already existing in DB 
 try {
   const existingUser = await User.findOne({email:email})
-console.log(existingUser)
+
+
+  
   if (existingUser){
     errors.push({msg:"User already exist"})
   }
