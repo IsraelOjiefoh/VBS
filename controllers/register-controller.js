@@ -1,12 +1,10 @@
-// Import necessary modules
-const { isAlpha, isValidEmail } = require('./validators');
+// Import necessary modules and utilities
+const { generateConfirmationCode, generateAccountNumber, generatePin } = require('../utils/randomGenerators');
+const { isAlpha, isValidEmail } = require('../utils/validators');
 const { sendConfirmationEmail } = require('./mailer');
-const { ObjectId } = require('mongodb');
+const User = require('../models/user');
 
-// Function to generate a random 6-digit confirmation code
-function generateConfirmationCode() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-}
+let errors = [];
 
 // Function to render the registration form with errors and previously entered data
 const renderWithErrors = (req, res, errors, data) => {
@@ -26,8 +24,6 @@ exports.getRegister = (req, res) => {
 // Controller function to handle registration form submission
 exports.postRegister = async (req, res) => {
     const { first_name, last_name, is_over_18, email } = req.body;
-
-    let errors = [];
 
     // Check for missing fields
     if (!first_name || !last_name || !is_over_18 || !email) {
@@ -70,18 +66,23 @@ exports.postRegister = async (req, res) => {
         });
     }
 
-    // Save user data to MongoDB
+    // Generate account number and pin
+    const accountNumber = generateAccountNumber();
+    const pin = generatePin();
+
+    // Save user data to MongoDB with Mongoose
     try {
-        const usersCollection = req.app.locals.db.collection('users');
-        const newUser = {
+        const newUser = new User({
             first_name,
             last_name,
+            accountNumber,
+            pin,
             email,
             is_over_18: Boolean(is_over_18),
             registration_date: new Date(),
-        };
-        const result = await usersCollection.insertOne(newUser);
-        console.log('User registered:', result.insertedId);
+        });
+        await newUser.save();
+        console.log('User registered:', newUser._id);
 
         // Generate a confirmation code and store it in the session
         const confirmationCode = generateConfirmationCode();
@@ -89,19 +90,14 @@ exports.postRegister = async (req, res) => {
         req.session.email = email;
 
         // Send confirmation email
-        sendConfirmationEmail(email, confirmationCode)
-            .then(info => {
-                console.log('Confirmation email sent:', info.messageId);
-                res.redirect('/confirm-email');
-            })
-            .catch(error => {
-                console.error('Failed to send confirmation email:', error);
-                req.flash('errors', { msg: 'Failed to send confirmation email' });
-                res.redirect('/register');
-            });
+        await sendConfirmationEmail(email, confirmationCode);
+        console.log('Confirmation email sent');
+
+        // Redirect to confirm-email page
+        res.redirect('/confirm-email');
     } catch (err) {
+        errors.push({ msg: 'Failed to register user' });
         console.error('Error registering user:', err);
-        req.flash('errors', { msg: 'Failed to register user' });
         res.redirect('/register');
     }
 };
@@ -109,42 +105,48 @@ exports.postRegister = async (req, res) => {
 // Controller function to handle email confirmation form submission
 exports.postConfirmationEmail = async (req, res) => {
     const { code } = req.body;
-    let errors = [];
 
     // Check if the provided code matches the one in the session
     if (code !== req.session.confirmationCode) {
         errors.push({ msg: 'Invalid confirmation code.' });
-    }
-
-    // If there are errors, redirect back to confirmation page with error message
-    if (errors.length > 0) {
         req.flash('errors', errors);
         return res.redirect('/confirm-email');
     }
 
-    // Update user record in MongoDB to mark email as verified
-    try {
-        const usersCollection = req.app.locals.db.collection('users');
-        const emailToUpdate = req.session.email;
-        const updateResult = await usersCollection.updateOne(
-            { email: emailToUpdate },
-            { $set: { email_verified: true } }
-        );
-        console.log('Email verified for:', emailToUpdate)
+    // Get email from session
+    const emailToUpdate = req.session.email;
 
+    try {
+        // Find the user by email and update email_verified status
+        const user = await User.findOneAndUpdate(
+            { email: emailToUpdate },
+            { $set: { email_verified: true } },
+            { new: true } // Return updated document
+        );
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        console.log('Email verified for:', emailToUpdate);
+
+        // Clear session data
+        delete req.session.confirmationCode;
+        delete req.session.email;
+
+        // Redirect to thank-you page
         res.redirect('/thank-you');
     } catch (err) {
         console.error('Error confirming email:', err);
         req.flash('errors', { msg: 'Failed to confirm email' });
         res.redirect('/confirm-email');
     }
+};
 
-    
-}
-
-exports.thankYou = (req, res) =>{
-    userEmail = req.session.email
+// Controller function to render the "thank you" page
+exports.thankYou = (req, res) => {
+    const userEmail = req.session.email;
 
     // Render the "thank you" page with user email
-        res.render('thank-you', {userEmail});
-}
+    res.render('thank-you', { userEmail });
+};

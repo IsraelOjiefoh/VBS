@@ -30,6 +30,20 @@
             font-weight: bold;
             color: #007bff;
         }
+        button {
+  background-color: blue;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: blue;
+        }
+        
     </style>
 </head>
 <body>
@@ -37,7 +51,10 @@
         <h2>Thank You for Confirming Your Email Address!</h2>
         <p>Your account details have been sent to your email address:</p>
      <p class="email-address"><%= userEmail %></p>
-        <p>Please check your inbox for a confirmation email containing your account information.</p>
+        <p>Please check your inbox for  email for information containing your account details.</p>
+        <a href=”/login">
+        <button >Login</button>
+        </a>
     </div>
 </body>
 </html>
