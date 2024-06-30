@@ -1,3 +1,6 @@
+const bcrypt = require('bcryptjs')
+
+
 const { generateConfirmationCode, generateAccountNumber, generatePin } = require('../utils/randomGenerators');
 
 
@@ -61,6 +64,18 @@ exports.postRegister = async (req, res) => {
     errors.push({ msg: 'You must confirm that you are 18 years or older' });
   }
 
+  //check if email is already existing in DB 
+try {
+  const existingUser = await User.findOne({email:email})
+console.log(existingUser)
+  if (existingUser){
+    errors.push({msg:"User already exist"})
+  }
+}catch(error){
+  console.log("Unable to check if user exists",error)
+}
+
+  
   // Render errors or proceed with registration
   if (errors.length > 0) {
     return renderWithErrors(req, res, errors, {
@@ -80,6 +95,17 @@ exports.postRegister = async (req, res) => {
   req.session.accountNumber = generateAccountNumber();
   req.session.pin = generatePin();
 
+  
+try{
+  const saltRounds = 10
+   const hashedPin = await bcrypt.hash(req.session.pin, saltRounds)
+  //store hashed pin in session 
+  req.session.hashedPin = hashedPin 
+  console.log(hashedPin)
+}catch(error){
+  console.log("error hashing pin:", error)
+}
+  
   // Send confirmation email
   await sendConfirmationEmail(email, confirmationCode);
   console.log('Confirmation email sent');
@@ -108,7 +134,7 @@ exports.postConfirmationEmail = async (req, res) => {
       first_name: req.session.first_name,
       last_name: req.session.last_name,
       accountNumber: req.session.accountNumber,
-      pin: req.session.pin,
+      pin: req.session.hashedPin,
       email: req.session.email,
       is_over_18: true,
       email_verified: true,
