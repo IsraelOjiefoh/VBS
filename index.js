@@ -1,5 +1,3 @@
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -71,8 +69,8 @@ app.get('/confirm-email', (req, res) => {
 // Route to handle email confirmation form submission
 app.post('/confirm-email', Controller.postConfirmationEmail);
 
-// Route for thank-you page
-app.get('/thank-you', Controller.thankYou);
+// Route for success page
+app.get('/success', Controller.success);
 
 // Start the server and listen on the specified port
 app.listen(port, () => {

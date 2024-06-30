@@ -121,7 +121,7 @@ exports.postConfirmationEmail = async (req, res) => {
     await sendAccountDetailsEmail(req.session.email, req.session.first_name, req.session.last_name, req.session.accountNumber, req.session.pin);
     console.log('Account details email sent');
 
-    res.redirect('/thank-you');
+    res.redirect('/success');
   } catch (err) {
     console.error('Error confirming email:', err);
     req.flash('errors', { msg: 'Failed to confirm email' });
@@ -129,10 +129,10 @@ exports.postConfirmationEmail = async (req, res) => {
   }
 };
 
-// Controller function to render the "thank you" page
-exports.thankYou = (req, res) => {
+// Controller function to render the "success" page
+exports.success = (req, res) => {
   const userEmail = req.session.email;
 
-  // Render the "thank you" page with user email
-  res.render('thank-you', { userEmail });
+  // Render the "success" page with user email
+  res.render('success', { userEmail });
 };
