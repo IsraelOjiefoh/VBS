@@ -52,4 +52,4 @@ const sendConfirmationEmail = async (to, code) => {
 };
 
 // Export the sendConfirmationEmail function
-module.exports = { sendConfirmationEmail };
+module.exports = sendConfirmationEmail ;
