@@ -1,13 +1,14 @@
 const User = require('../models/user');
 
 exports.getLogin = async (req, res) => {
-    try {
+    
+        try {
         const email = req.flash('email')[0]; // Get the email from flash messages if it exists
         let accountNumber = '';
         if (email) {
             const user = await User.findOne({ email: email });
             if (user) {
-                accountNumber = user.accountNumber;
+                accountNumber = user.accountNumber;            
             }
         }
         res.render('login', { accountNumber, errors: res.locals.errors });
