@@ -98,8 +98,9 @@
 
     <form action="/login" method="POST">
       <label for="accountNumber">Account Number:</label>
-      <input type="number" id="accountNumber" name="accountNumber" required pattern="[0-9]{1,10}" maxlength="10" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
-          placeholder="Account Number">
+        
+<input type="number" id="accountNumber" name="accountNumber" required pattern="[0-9]{1,10}" maxlength="10" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
+       value="<%- accountNumber %>">
       
       <br>
       

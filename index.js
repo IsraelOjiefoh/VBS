@@ -1,14 +1,27 @@
 const express = require('express');
+
 const mongoose = require('mongoose');
+
 const bodyParser = require('body-parser');
+
 const session = require('express-session');
+
 const flash = require('connect-flash');
+
 const bcrypt = require('bcryptjs');
-const Controller = require('./controllers/register-controller');
+
+const registerController = require('./controllers/register-controller');
+
+const loginController = require('./controllers/login-controller')
+
 const sendConfirmationEmail = require('./sendMail/confirmationCode');
+
 const sendAccountDetailsEmail = require('./sendMail/accountDetails');
+
 const User = require('./models/user');
+
 const { generateConfirmationCode, generateAccountNumber, generatePin } = require('./utils/randomGenerators');
+
 const { isAlpha, isValidEmail } = require('./utils/validators');
 
 // Load environment variables from .env file
@@ -64,22 +77,22 @@ app.get('/', (req, res) => {
 });
 
 // Registration routes
-app.get('/register', Controller.getRegister);
-app.post('/register', Controller.postRegister);
+app.get('/register', registerController.getRegister);
+
+app.post('/register', registerController.postRegister);
 
 // Confirmation email routes
 app.get('/confirm-email', (req, res) => {
     res.render('confirm-email');
 });
-app.post('/confirm-email', Controller.postConfirmationEmail);
+
+app.post('/confirm-email', registerController.postConfirmationEmail);
 
 // Success route
-app.get('/success', Controller.success);
+app.get('/success', registerController.success);
 
 // Login route
-app.get('/login', (req, res) => {
-    res.render('login');
-});
+app.get('/login', loginController.getLogin);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
