@@ -56,9 +56,10 @@ exports.postRegister = async (req, res) => {
 
   // Check if email is already existing in DB
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email});
 
     if (existingUser) {
+      req.flash('email', email)
       req.flash('error_msg',"It seems you've already registered with us. Please log in to proceed.");
       return res.redirect('/login');
     }
