@@ -9,10 +9,10 @@
 <body>
   <div>
     <h1>Register</h1>
-    <% if (errors.length > 0) { %>
+    <% if (locals.errors) { %>
   <div id="error-messages" class="alert alert-danger">
-    <% errors.forEach((error, index) => { %>
-      <p><%= error.msg %></p>
+    <% locals.errors.forEach((error, index) => { %>
+      <p><%= error %></p>
     <% }) %>
   </div>
   <script>

@@ -3,7 +3,13 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
+const bcrypt = require('bcryptjs');
 const Controller = require('./controllers/register-controller');
+const sendConfirmationEmail = require('./sendMail/confirmationCode');
+const sendAccountDetailsEmail = require('./sendMail/accountDetails');
+const User = require('./models/user');
+const { generateConfirmationCode, generateAccountNumber, generatePin } = require('./utils/randomGenerators');
+const { isAlpha, isValidEmail } = require('./utils/validators');
 
 // Load environment variables from .env file
 require('dotenv').config();
@@ -30,13 +36,13 @@ app.use(session({
     saveUninitialized: true,
 }));
 
-// Middleware to handle flash messages
+// Middleware for flash messages
 app.use(flash());
 
-// Middleware to make flash messages available in views
+// Middleware to pass flash messages to all views
 app.use((req, res, next) => {
-    res.locals.errors = req.flash('errors');
-    next();
+  res.locals.errors = req.flash('error_msg');
+  next();
 });
 
 // MongoDB connection setup with Mongoose
@@ -47,35 +53,39 @@ db.once('open', () => {
     console.log('Connected to MongoDB');
 });
 
-// Make the database available to the app
+// Make the database connection available to the app
 app.locals.db = db;
 
-// Routes should be defined after successful DB connection
+// Routes
 
-// Route to render the home page
-app.get('/', (req, res) => res.render('index'));
+// Home page route
+app.get('/', (req, res) => {
+    res.render('index');
+});
 
-// Route to render the registration form
+// Registration routes
 app.get('/register', Controller.getRegister);
-
-// Route to handle registration form submission
 app.post('/register', Controller.postRegister);
 
-// Route to render the email confirmation form
+// Confirmation email routes
 app.get('/confirm-email', (req, res) => {
     res.render('confirm-email');
 });
-
-// Route to handle email confirmation form submission
 app.post('/confirm-email', Controller.postConfirmationEmail);
 
-// Route for success page
+// Success route
 app.get('/success', Controller.success);
 
-// Route for login page 
-app.get('/login', (req, res)=>{
-    res.render('login')
-})
+// Login route
+app.get('/login', (req, res) => {
+    res.render('login');
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
 
 // Start the server and listen on the specified port
 app.listen(port, () => {

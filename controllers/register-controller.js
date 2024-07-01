@@ -1,18 +1,9 @@
-const bcrypt = require('bcryptjs')
-
-
+const bcrypt = require('bcryptjs');
 const { generateConfirmationCode, generateAccountNumber, generatePin } = require('../utils/randomGenerators');
-
-
 const { isAlpha, isValidEmail } = require('../utils/validators');
-
-const sendConfirmationEmail = require('../sendMail/confirmationCode')
-
-const sendAccountDetailsEmail = require('../sendMail/accountDetails'); // Import the default export
-
+const sendConfirmationEmail = require('../sendMail/confirmationCode');
+const sendAccountDetailsEmail = require('../sendMail/accountDetails');
 const User = require('../models/user');
-
-let errors = [];
 
 // Function to render the registration form with errors and previously entered data
 const renderWithErrors = (req, res, errors, data) => {
@@ -22,70 +13,64 @@ const renderWithErrors = (req, res, errors, data) => {
 // Controller function to render the registration page
 exports.getRegister = (req, res) => {
   res.render('register', {
-    errors: [], // Initialize with no errors
-    first_name: '', // Initialize with empty first name
-    last_name: '', // Initialize with empty last name
-    email: '', // Initialize with empty email
+    first_name: '',
+    last_name: '',
+    email: '',
   });
 };
 
-// Controller function to handle registration form submission
 exports.postRegister = async (req, res) => {
   const { first_name, last_name, is_over_18, email } = req.body;
+  const errors = [];
 
   // Check for missing fields
   if (!first_name || !last_name || !is_over_18 || !email) {
-    errors.push({ msg: 'Please fill all the fields' });
+    errors.push('Please fill all the fields');
   }
 
   // Validate first name
   if (!isAlpha(first_name)) {
-    errors.push({ msg: 'First Name should contain only letters' });
+    errors.push('First Name should contain only letters');
   }
   if (first_name.length < 2 || first_name.length > 20) {
-    errors.push({ msg: 'First Name must be between 2 and 20 letters' });
+    errors.push('First Name must be between 2 and 20 letters');
   }
 
   // Validate last name
   if (!isAlpha(last_name)) {
-    errors.push({ msg: 'Last Name should contain only letters' });
+    errors.push('Last Name should contain only letters');
   }
   if (last_name.length < 2 || last_name.length > 30) {
-    errors.push({ msg: 'Last Name must be between 2 and 30 letters' });
+    errors.push('Last Name must be between 2 and 30 letters');
   }
 
   // Validate email
   if (!isValidEmail(email)) {
-    errors.push({ msg: 'Invalid Email Address Format' });
+    errors.push('Invalid Email Address Format');
   }
 
   // Check if the user confirmed they are 18 or older
   if (!is_over_18) {
-    errors.push({ msg: 'You must confirm that you are 18 years or older' });
+    errors.push('You must confirm that you are 18 years or older');
   }
 
-  //check if email is already existing in DB 
-try {
-  const existingUser = await User.findOne({email:email})
+  // Check if email is already existing in DB
+  try {
+    const existingUser = await User.findOne({ email });
 
-
-  
-  if (existingUser){
-    errors.push({msg:"User already exist"})
+    if (existingUser) {
+      req.flash('error_msg',"It seems you've already registered with us. Please log in to proceed.");
+      return res.redirect('/login');
+    }
+  } catch (error) {
+    console.log("Unable to check if user exists", error);
+    req.flash('error_msg', 'An error occurred, please try again');
+    return res.redirect('/register');
   }
-}catch(error){
-  console.log("Unable to check if user exists",error)
-}
 
-  
   // Render errors or proceed with registration
   if (errors.length > 0) {
-    return renderWithErrors(req, res, errors, {
-      first_name,
-      last_name,
-      is_over_18,
-      email,
-    });
+    return renderWithErrors(req, res, errors, { first_name, last_name, is_over_18, email });
   }
 
   // Generate a confirmation code and store it in the session
@@ -97,22 +82,28 @@ try {
   req.session.accountNumber = generateAccountNumber();
   req.session.pin = generatePin();
 
-  
-try{
-  const saltRounds = 10
-   const hashedPin = await bcrypt.hash(req.session.pin, saltRounds)
-  //store hashed pin in session 
-  req.session.hashedPin = hashedPin 
-  console.log(hashedPin)
-}catch(error){
-  console.log("error hashing pin:", error)
-}
-  
-  // Send confirmation email
-  await sendConfirmationEmail(email, confirmationCode);
-  console.log('Confirmation email sent');
+  // Hash user PIN before sending to DB
+  try {
+    const saltRounds = 10;
+    const hashedPin = await bcrypt.hash(req.session.pin, saltRounds);
+    req.session.hashedPin = hashedPin;
+    console.log('Hashed PIN:', hashedPin);
+  } catch (error) {
+    console.log("Error hashing pin:", error);
+    req.flash('error_msg', 'An error occurred, please try again');
+    return res.redirect('/register');
+  }
 
-  res.redirect('/confirm-email');
+  // Send confirmation email
+  try {
+    await sendConfirmationEmail(email, confirmationCode);
+    console.log('Confirmation email sent');
+    res.redirect('/confirm-email');
+  } catch (error) {
+    console.log("An error occurred sending confirmation email:", error);
+    req.flash('error_msg', 'An error occurred, please try again');
+    res.redirect('/register');
+  }
 };
 
 // Controller function to handle email confirmation form submission
@@ -121,12 +112,7 @@ exports.postConfirmationEmail = async (req, res) => {
 
   // Check if the provided code matches the one in the session
   if (code !== req.session.confirmationCode) {
-    errors.push({ msg: 'Invalid confirmation code.' });
-  }
-
-  // If there are errors, redirect back to confirmation page with error message
-  if (errors.length > 0) {
-    req.flash('errors', errors);
+    req.flash('error_msg', 'Invalid confirmation code.');
     return res.redirect('/confirm-email');
   }
 
@@ -152,7 +138,7 @@ exports.postConfirmationEmail = async (req, res) => {
     res.redirect('/success');
   } catch (err) {
     console.error('Error confirming email:', err);
-    req.flash('errors', { msg: 'Failed to confirm email' });
+    req.flash('error_msg', 'Failed to confirm email');
     res.redirect('/confirm-email');
   }
 };
@@ -160,7 +146,6 @@ exports.postConfirmationEmail = async (req, res) => {
 // Controller function to render the "success" page
 exports.success = (req, res) => {
   const userEmail = req.session.email;
-
   // Render the "success" page with user email
   res.render('success', { userEmail });
 };
