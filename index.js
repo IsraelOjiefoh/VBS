@@ -94,12 +94,19 @@ app.get('/success', registerController.success);
 // Login route
 app.get('/login', loginController.getLogin);
 
+app.post('/login', loginController.postLogin)
+
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
 });
 
+
+app.get('/dashboard', (req, res)=>{
+    res.render('dashboard', {user})
+})
 // Start the server and listen on the specified port
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);

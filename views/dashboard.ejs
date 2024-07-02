@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #007bff;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .navbar .username {
+            font-size: 1.5rem;
+        }
+        .navbar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .navbar ul li {
+            margin-left: 1rem;
+        }
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        .container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .balance-card {
+            background-color: #007bff;
+            color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .balance-info {
+            flex: 1;
+        }
+        .balance-info h3 {
+            margin: 0;
+        }
+        .balance-info p {
+            font-size: 2rem;
+            margin: 0.5rem 0;
+        }
+        .balance-actions {
+            text-align: right;
+        }
+        .balance-actions a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1rem;
+            font-size: 1rem;
+        }
+        .balance-actions button {
+            padding: 1rem;
+            border: none;
+            background-color: #f8c44c;
+            color: black;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+        }
+        .balance-actions button:hover {
+            background-color: #f5b023;
+        }
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .actions button {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+        }
+        .actions button:hover {
+            background-color: #0056b3;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .balance-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .balance-actions {
+                text-align: left;
+                margin-top: 1rem;
+            }
+            .navbar ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            .navbar ul li {
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <div class="username">Hi, <%= user.first_name %>!</div>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Balance Card -->
+        <div class="balance-card">
+            <div class="balance-info">
+                <h3>Available Balance</h3>
+                <p>₦0</p>
+            </div>
+            <div class="balance-actions">
+                <a href="/transaction-history">Transaction History</a>
+                <button>Add Money</button>
+            </div>
+        </div>
+
+        <!-- Actions Section -->
+        <section class="actions">
+            <button>Transfer Money</button>
+        </section>
+    </div>
+</body>
+</html>
