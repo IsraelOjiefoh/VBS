@@ -38,7 +38,7 @@ exports.postLogin = async (req, res) => {
 
         // Assuming login is successful
         req.session.user = user._id; // Store user ID in session or any other data you need
-        return res.render("dashboard",{user});
+        return res.render("dashboard", {user});
     } catch (error) {
         console.error("An error occurred", error);
         return res.render("login");

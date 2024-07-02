@@ -1,162 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            background-color: #f5f5f5;
-        }
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background-color: #007bff;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .navbar .username {
-            font-size: 1.5rem;
-        }
-        .navbar ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-        }
-        .navbar ul li {
-            margin-left: 1rem;
-        }
-        .navbar ul li a {
-            color: white;
-            text-decoration: none;
-            font-size: 1rem;
-        }
-        .container {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .balance-card {
-            background-color: #007bff;
-            color: white;
-            padding: 2rem;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .balance-info {
-            flex: 1;
-        }
-        .balance-info h3 {
-            margin: 0;
-        }
-        .balance-info p {
-            font-size: 2rem;
-            margin: 0.5rem 0;
-        }
-        .balance-actions {
-            text-align: right;
-        }
-        .balance-actions a {
-            color: white;
-            text-decoration: none;
-            margin-left: 1rem;
-            font-size: 1rem;
-        }
-        .balance-actions button {
-            padding: 1rem;
-            border: none;
-            background-color: #f8c44c;
-            color: black;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-size: 1rem;
-        }
-        .balance-actions button:hover {
-            background-color: #f5b023;
-        }
-        .actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .actions button {
-            flex: 1;
-            padding: 1rem;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-size: 1rem;
-        }
-        .actions button:hover {
-            background-color: #0056b3;
-        }
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            .balance-card {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .balance-actions {
-                text-align: left;
-                margin-top: 1rem;
-            }
-            .navbar ul {
-                flex-direction: column;
-                align-items: center;
-            }
-            .navbar ul li {
-                margin: 0.5rem 0;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banking App</title>
+  <style>
+    /* Reset some default browser styles */
+    body, h3, p, div, a, button, section, h2, label {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f5;
+      padding: 20px;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #4f3ff0;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+
+    .navbar .username {
+      font-size: 1.2em;
+    }
+
+    .navbar .profile-pic img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    /* Container for the main content */
+    .container {
+      margin-top: 20px;
+    }
+
+    /* Balance Card */
+    .balance-card {
+      background: linear-gradient(135deg, #4f3ff0, #a5c0ff);
+      color: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .balance-card .balance-info h3 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+
+    .balance-card .balance-info p {
+      font-size: 2.5em;
+    }
+
+    .balance-card .balance-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .balance-card .balance-actions a,
+    .balance-card .balance-actions button {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 1em;
+      transition: background 0.3s;
+    }
+
+    .balance-card .balance-actions a:hover,
+    .balance-card .balance-actions button:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Actions Section */
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .actions button {
+      background: #4f3ff0;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .actions button:hover {
+      background: #3b2dce;
+    }
+
+    /* Profile Section */
+    .profile-section {
+      margin-top: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-section h2 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .profile-info .info {
+      display: flex;
+      justify-content: space-between;
+      background: #f0f0f5;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .profile-info .info label {
+      font-weight: bold;
+    }
+
+    .sign-out {
+      margin-top: 20px;
+      background: #ff4f4f;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .sign-out:hover {
+      background: #e04343;
+    }
+
+    /* Card Section */
+    .card-section {
+      margin-top: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-section h2 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+
+    .cards {
+      display: flex;
+      gap: 10px;
+    }
+
+    .cards .card {
+      flex: 1;
+      background: linear-gradient(135deg, #ff6f6f, #ff9f9f);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .cards .card p {
+      margin-bottom: 10px;
+    }
+
+    /* Recent Transactions Section */
+    .transactions-section {
+      margin-top: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .transactions-section h2 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+
+    .transactions {
+      list-style: none;
+    }
+
+    .transactions li {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f5;
+    }
+  </style>
 </head>
 <body>
+  <!-- Navigation Bar -->
+  <div class="navbar">
+    <div class="username">Hi, <%= user.first_name %>!</div>
+    
+  </div>
 
-    <!-- Navigation Bar -->
-    <div class="navbar">
-        <div class="username">Hi, <%= user.first_name %>!</div>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/profile">Profile</a></li>
-            <li><a href="/settings">Settings</a></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Balance Card -->
+    <div class="balance-card">
+      <div class="balance-info">
+        <h3>Available Balance</h3>
+        <p>₦0</p>
+      </div>
+      <div class="balance-actions">
+        <a href="/transaction-history">Transaction History</a>
+        <button>Add Money</button>
+      </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Balance Card -->
-        <div class="balance-card">
-            <div class="balance-info">
-                <h3>Available Balance</h3>
-                <p>₦0</p>
-            </div>
-            <div class="balance-actions">
-                <a href="/transaction-history">Transaction History</a>
-                <button>Add Money</button>
-            </div>
+    <!-- Actions Section -->
+    <section class="actions">
+      <button>Transfer Money</button>
+    </section>
+
+    <!-- Profile Section -->
+    <section class="profile-section">
+      <h2>Profile</h2>
+      <div class="profile-info">
+        <div class="info">
+          <label>Username</label>
+          <p><%= user.first_name + " " + user.last_name %></p>
         </div>
+        <div class="info">
+          <label>First Name</label>
+          <p><%= user.first_name %></p>
+        </div>
+        <div class="info">
+          <label>Last Name</label>
+          <p><%= user.last_name %></p>
+        </div>
+        
+      </div>
+      <button class="sign-out">Sign Out</button>
+    </section>
 
-        <!-- Actions Section -->
-        <section class="actions">
-            <button>Transfer Money</button>
-        </section>
-    </div>
+
+    <!-- Recent Transactions Section -->
+    <section class="transactions-section">
+      <h2>Recent Transactions</h2>
+      <ul class="transactions">
+        <li>
+          <span>Shopping</span>
+          <span>-₦120</span>
+        </li>
+        <li>
+          <span>Medicine</span>
+          <span>-₦200</span>
+        </li>
+        <li>
+          <span>Sport</span>
+          <span>-₦100.4</span>
+        </li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>
 </body>
 </html>
