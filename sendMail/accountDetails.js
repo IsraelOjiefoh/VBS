@@ -6,7 +6,7 @@ require('dotenv').config();
 
 
 // Function to send account details email
-const sendAccountDetailsEmail = async (to, firstName, lastName, accountNumber, pin) => {
+const sendAccountDetailsEmail = async (to, firstName, lastName, accountNumber, balance,pin) => {
   try {
     // Create a transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
@@ -28,7 +28,7 @@ const sendAccountDetailsEmail = async (to, firstName, lastName, accountNumber, p
 
     // Define email options with account details
     const mailOptions = {
-      from: process.env.EMAIL_USER, // Sender address
+      from: `"Visual Banking Simulation"<${process.env.EMAIL_USER}>`,// Sender address
       to, // List of recipients
       subject: 'Your Account Details', // Subject line
       html: `
@@ -38,6 +38,7 @@ const sendAccountDetailsEmail = async (to, firstName, lastName, accountNumber, p
           <li><b>First Name:</b> ${firstName}</li>
           <li><b>Last Name:</b> ${lastName}</li>
           <li><b>Account Number:</b> ${accountNumber}</li>
+          <li><b>Current Balance:</b> ₦ ${balance}</li>
           <li><b>PIN:</b> ${pin}</li>
         </ul>
         <p>Please keep this information secure.</p>

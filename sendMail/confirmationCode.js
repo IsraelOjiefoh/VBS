@@ -27,7 +27,7 @@ const sendConfirmationEmail = async (to, code) => {
 
     // Define email options
     const mailOptions = {
-      from: process.env.EMAIL_USER, // Sender address
+      from: `"Visual Banking Simulation"<${process.env.EMAIL_USER}>`,// Sender address
       to, // List of recipients
       subject: 'Email Confirmation', // Subject line
       html: `<p>Please use the following code to confirm your email: <b>${code}</b></p>`, // HTML body

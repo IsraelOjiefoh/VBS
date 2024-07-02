@@ -21,8 +21,12 @@ exports.getRegister = (req, res) => {
 
 exports.postRegister = async (req, res) => {
   const { first_name, last_name, is_over_18, email } = req.body;
-  const errors = [];
 
+  
+  const errors = [];
+  const balance = 500000.00
+
+  
   // Check for missing fields
   if (!first_name || !last_name || !is_over_18 || !email) {
     errors.push('Please fill all the fields');
@@ -81,6 +85,7 @@ exports.postRegister = async (req, res) => {
   req.session.last_name = last_name;
   req.session.email = email;
   req.session.accountNumber = generateAccountNumber();
+  req.session.balance = balance 
   req.session.pin = generatePin();
 
   // Hash user PIN before sending to DB
@@ -123,6 +128,7 @@ exports.postConfirmationEmail = async (req, res) => {
       first_name: req.session.first_name,
       last_name: req.session.last_name,
       accountNumber: req.session.accountNumber,
+      balance:req.session.balance,
       pin: req.session.hashedPin,
       email: req.session.email,
       is_over_18: true,
@@ -133,7 +139,8 @@ exports.postConfirmationEmail = async (req, res) => {
     console.log('User registered:', newUser._id);
 
     // Send account details email
-    await sendAccountDetailsEmail(req.session.email, req.session.first_name, req.session.last_name, req.session.accountNumber, req.session.pin);
+    await sendAccountDetailsEmail(req.session.email, req.session.first_name, req.session.last_name, req.session.accountNumber, 
+req.session.balance,                               req.session.pin);
     console.log('Account details email sent');
 
     res.redirect('/success');
