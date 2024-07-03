@@ -10,13 +10,9 @@ const flash = require('connect-flash');
 
 const bcrypt = require('bcryptjs');
 
-const registerController = require('./controllers/register-controller');
+const authRoutes = require('./routes/auth')
 
-const loginController = require('./controllers/login-controller')
-
-const sendConfirmationEmail = require('./sendMail/confirmationCode');
-
-const sendAccountDetailsEmail = require('./sendMail/accountDetails');
+const userRoute = require('./routes/userRoute')
 
 const User = require('./models/user');
 
@@ -58,7 +54,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// MongoDB connection setup with Mongoose
+
+ // MongoDB connection setup with Mongoose
 mongoose.connect(process.env.URI);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -69,32 +66,16 @@ db.once('open', () => {
 // Make the database connection available to the app
 app.locals.db = db;
 
-// Routes
+// authentication Routes
+app.use('/auth', authRoutes)
+
+// user Routes
+app.use('/users', userRoute)
 
 // Home page route
 app.get('/', (req, res) => {
     res.render('index');
 });
-
-// Registration routes
-app.get('/register', registerController.getRegister);
-
-app.post('/register', registerController.postRegister);
-
-// Confirmation email routes
-app.get('/confirm-email', (req, res) => {
-    res.render('confirm-email');
-});
-
-app.post('/confirm-email', registerController.postConfirmationEmail);
-
-// Success route
-app.get('/success', registerController.success);
-
-// Login route
-app.get('/login', loginController.getLogin);
-
-app.post('/login', loginController.postLogin)
 
 
 // Error handling middleware
@@ -103,10 +84,6 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 });
 
-
-app.get('/dashboard', (req, res)=>{
-    res.render('dashboard', {user})
-})
 // Start the server and listen on the specified port
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);

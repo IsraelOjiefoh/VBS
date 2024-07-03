@@ -41,6 +41,6 @@ exports.postLogin = async (req, res) => {
         return res.render("dashboard", {user});
     } catch (error) {
         console.error("An error occurred", error);
-        return res.render("login");
+        return res.render("/auth/login");
     }
 };

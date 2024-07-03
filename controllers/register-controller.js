@@ -65,12 +65,12 @@ exports.postRegister = async (req, res) => {
     if (existingUser) {
       req.flash('email', email)
       req.flash('error_msg',"It seems you've already registered with us. Please log in to proceed.");
-      return res.redirect('/login');
+      return res.redirect('/auth/login');
     }
   } catch (error) {
     console.log("Unable to check if user exists", error);
     req.flash('error_msg', 'An error occurred, please try again');
-    return res.redirect('/register');
+    return res.redirect('/auth/register');
   }
 
   // Render errors or proceed with registration
@@ -97,18 +97,18 @@ exports.postRegister = async (req, res) => {
   } catch (error) {
     console.log("Error hashing pin:", error);
     req.flash('error_msg', 'An error occurred, please try again');
-    return res.redirect('/register');
+    return res.redirect('/auth/register');
   }
 
   // Send confirmation email
   try {
     await sendConfirmationEmail(email, confirmationCode);
     console.log('Confirmation email sent');
-    res.redirect('/confirm-email');
+    res.redirect('/auth/confirm-email');
   } catch (error) {
     console.log("An error occurred sending confirmation email:", error);
     req.flash('error_msg', 'An error occurred, please try again');
-    res.redirect('/register');
+    res.redirect('/auth/register');
   }
 };
 
@@ -119,7 +119,7 @@ exports.postConfirmationEmail = async (req, res) => {
   // Check if the provided code matches the one in the session
   if (code !== req.session.confirmationCode) {
     req.flash('error_msg', 'Invalid confirmation code.');
-    return res.redirect('/confirm-email');
+    return res.redirect('/auth/confirm-email');
   }
 
   // Save user data to MongoDB with Mongoose
@@ -143,11 +143,11 @@ exports.postConfirmationEmail = async (req, res) => {
 req.session.balance,                               req.session.pin);
     console.log('Account details email sent');
 
-    res.redirect('/success');
+    res.redirect('/auth/success');
   } catch (err) {
     console.error('Error confirming email:', err);
     req.flash('error_msg', 'Failed to confirm email');
-    res.redirect('/confirm-email');
+    res.redirect('/auth/confirm-email');
   }
 };
 

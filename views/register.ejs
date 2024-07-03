@@ -24,7 +24,7 @@
     }, 4000); // 3000 milliseconds = 2 seconds
   </script>
 <% } %>
-    <form action="/register" method="POST">
+    <form action="/auth/register" method="POST">
       <label for="firstname">Firstname:</label>
       <input type="text" autocomplete="given-name" name="first_name" id="firstname" required>
       
@@ -42,7 +42,7 @@
       <button type="submit">Register</button>
      
       <div>
-        <a class="login-cta" href="/login">Existing user? Login</a>     
+        <a class="login-cta" href="/auth/login">Existing user? Login</a>     
       </div>
       
     </form>

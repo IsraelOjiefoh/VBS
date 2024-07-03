@@ -27,7 +27,7 @@
 <% } %>
 
   
-    <form action="/confirm-email" method="POST">
+    <form action="/auth/confirm-email" method="POST">
       <label for="code">Confirmation Code:</label>
       <input type="number" id="code" name="code" required pattern="[0-9]{1,6}" maxlength="6" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);">
       <button type="submit">Confirm</button>
