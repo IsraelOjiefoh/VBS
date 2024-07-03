@@ -14,12 +14,6 @@ const authRoutes = require('./routes/auth')
 
 const userRoute = require('./routes/userRoute')
 
-const User = require('./models/user');
-
-const { generateConfirmationCode, generateAccountNumber, generatePin } = require('./utils/randomGenerators');
-
-const { isAlpha, isValidEmail } = require('./utils/validators');
-
 // Load environment variables from .env file
 require('dotenv').config();
 
@@ -51,6 +45,9 @@ app.use(flash());
 // Middleware to pass flash messages to all views
 app.use((req, res, next) => {
   res.locals.errors = req.flash('error_msg');
+
+    res.locals.message = req.flash('message');
+    
   next();
 });
 

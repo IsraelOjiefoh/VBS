@@ -64,7 +64,7 @@ exports.postRegister = async (req, res) => {
 
     if (existingUser) {
       req.flash('email', email)
-      req.flash('error_msg',"It seems you've already registered with us. Please log in to proceed.");
+      req.flash('messasge',"It seems you've already registered with us. Please log in to proceed.");
       return res.redirect('/auth/login');
     }
   } catch (error) {

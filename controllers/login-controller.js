@@ -27,13 +27,15 @@ exports.postLogin = async (req, res) => {
         const user = await User.findOne({ accountNumber });
 
         if (!user) {
-            return res.status(401).send("Invalid credentials, please check your account number");
+            req.flash('error_msg', "Invalid credentials, please check your account number and password")
+            return res.redirect('/auth/login')
         }
 
         const isMatch = await bcrypt.compare(password, user.pin);
 
         if (!isMatch) {
-            return res.status(401).send("Invalid credentials, please check your password");
+            req.flash('error_msg', "Invalid credentials, please check your account number and password")
+            return res.redirect('/auth/login')
         }
 
         // Assuming login is successful

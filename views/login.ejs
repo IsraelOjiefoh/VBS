@@ -66,13 +66,23 @@
 
     .message {
         color: #31708f;
-        background-color: #d9edf7;
+        background-color: #f7d9d9;
         border: 1px solid #bce8f1;
         padding: 10px;
         border-radius: 4px;
         margin-bottom: 20px;
     }
-    .forgot-pin{
+
+    .error-message {
+        color: #a94442;
+        background-color: #f7d9d9;
+        border: 1px solid #bce8f1;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .forgot-pin {
         display: inline-block;
         padding: 10px 20px;
         color: blue;
@@ -88,35 +98,48 @@
     <h2>Login Form</h2>
 
     <% if (locals.errors) { %>
-  <div id="error-messages" class="message">
-    <% locals.errors.forEach((error, index) => { %>
-      <p><%= error %></p>
-    <% }) %>
-  </div>
-  
-<% } %>
+      <div id="error-message" class="error-message">
+        <% locals.errors.forEach((error, index) => { %>
+          <p><%= error %></p>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <% if (locals.message) { %>
+      <div id="message" class="message">
+        <% locals.message.forEach((message, index) => { %>
+          <p><%= message %></p>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <script>
+      setTimeout(function() {
+        var errorMessages = document.getElementById('error-message');
+        if (errorMessages) {
+          errorMessages.remove();
+        }
+        var successMessages = document.getElementById('message');
+        if (successMessages) {
+          successMessages.remove();
+        }
+      }, 4000);
+    </script>
 
     <form action="/auth/login" method="POST">
       <label for="accountNumber">Account Number:</label>
-        
-<input type="number" id="accountNumber" name="accountNumber" required pattern="[0-9]{1,10}" maxlength="10" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
-       value="<%- accountNumber %>">
-      
+      <input type="number" id="accountNumber" name="accountNumber" required pattern="[0-9]{1,10}" maxlength="10" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" value="<%- accountNumber %>">
       <br>
-      
       <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required pattern="[0-9]{1,6}" maxlength="6" 
-          inputmode="numeric" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);"
-          placeholder="Password">
-      
+      <input type="password" id="password" name="password" required pattern="[0-9]{1,6}" maxlength="6" inputmode="numeric" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);" placeholder="Password">
       <br>
-      
       <input type="submit" value="Login">
-          <div>
-          <a class="forgot-pin" href="/login">Forgot Password?</a>     
+      <div>
+        <a class="forgot-pin" href="/login">Forgot Password?</a>
       </div>
-      
     </form>
   </div>
+</body>
+</html>
 </body>
 </html>
