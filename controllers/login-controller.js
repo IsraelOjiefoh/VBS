@@ -26,6 +26,16 @@ exports.postLogin = async (req, res) => {
     try {
         const user = await User.findOne({ accountNumber });
 
+        if (accountNumber.length != 10){
+            req.flash('error_msg', "Account Number should be 10 digits.")
+            return res.redirect('/auth/login')
+            
+        }
+        
+        if (password.length != 10){
+            req.flash('error_msg', "Password should be 6 digits.")
+            return res.redirect('/auth/login')
+        }
         if (!user) {
             req.flash('error_msg', "Invalid credentials, please check your account number and password")
             return res.redirect('/auth/login')

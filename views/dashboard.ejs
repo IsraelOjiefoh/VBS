@@ -242,7 +242,18 @@
   <!-- Main Content -->
   <div class="container">
     <!-- Flash Messages -->
-    
+<% if (locals.success_msg) { %>
+  <div class="success-message">
+    <p><%= locals.success_msg %></p>
+  </div>
+<% } %>
+
+<!-- Display Error Message -->
+<% if (locals.error_msg) { %>
+  <div class="error-message">
+    <p><%= locals.kerror_msg %></p>
+  </div>
+<% } %>
     <!-- Balance Card -->
     <div class="balance-card">
       <div class="balance-info">
