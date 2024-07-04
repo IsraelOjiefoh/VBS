@@ -14,6 +14,8 @@ const authRoutes = require('./routes/auth')
 
 const userRoute = require('./routes/userRoute')
 
+const bankingRoute = require('./routes/banking')
+
 // Load environment variables from .env file
 require('dotenv').config();
 
@@ -47,6 +49,8 @@ app.use((req, res, next) => {
   res.locals.errors = req.flash('error_msg');
 
     res.locals.message = req.flash('message');
+
+    res.locals.success_msg = req.flash('success_msg');
     
   next();
 });
@@ -67,7 +71,10 @@ app.locals.db = db;
 app.use('/auth', authRoutes)
 
 // user Routes
-app.use('/users', userRoute)
+app.use('/user', userRoute)
+
+// banking Routes
+app.use('/banking', bankingRoute)
 
 // Home page route
 app.get('/', (req, res) => {

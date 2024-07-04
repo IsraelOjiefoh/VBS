@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true },
     accountNumber: { type: String, required: true },
     pin: { type: String, required: true },
-    balance:{type: mongoose.Schema.Types.Decimal},
+    balance:{type: Number},
     is_over_18: { type: Boolean, required: true },
     registration_date: { type: Date, default: Date.now },
     email_verified: { type: Boolean, default: false },

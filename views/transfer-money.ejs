@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transfer Money</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .transfer-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        text-align: center;
+    }
+
+    .transfer-container h2 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .transfer-container label {
+        text-align: left;
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+    }
+
+    .transfer-container input[type="number"],
+    .transfer-container input[type="text"] {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .transfer-container input[type="submit"] {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .transfer-container input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+
+    .message {
+        color: #31708f;
+        background-color: #d9edf7;
+        border: 1px solid #bce8f1;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .error-message {
+        color: #a94442;
+        background-color: #f7d9d9;
+        border: 1px solid #ebccd1;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+<body>
+  <div class="transfer-container">
+    <h2>Transfer Money</h2>
+
+    <% if (errors && errors.length > 0) { %>
+    <div id="error-message" class="error-message">
+      <% errors.forEach((error) => { %>
+        <p><%= error %></p>
+      <% }) %>
+    </div>
+    <% } %>
+
+    <% if (message && message.length > 0) { %>
+    <div id="message" class="message">
+      <% message.forEach((msg) => { %>
+        <p><%= msg %></p>
+      <% }) %>
+    </div>
+    <% } %>
+
+    <form action="/banking/transfer-money" method="POST">
+      <label for="receiverAccount">Receiver Account Number:</label>
+      <input type="number" id="receiverAccount" name="receiverAccount" required pattern="[0-9]{1,10}" maxlength="10" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);">
+      <br>
+      
+      <label for="amount">Amount:</label>
+      <input type="number" id="amount" name="amount" required>
+      <br>
+      
+      <input type="submit" value="Transfer">
+    </form>
+  </div>
+
+  <script>
+    setTimeout(function() {
+      var messages = document.getElementById('message');
+      var errorMessages = document.getElementById('error-message');
+      if (messages) {
+        messages.remove();
+      }
+      if (errorMessages) {
+        errorMessages.remove();
+      }
+    }, 4000);
+  </script>
+</body>
+</html>

@@ -211,6 +211,25 @@
       padding: 10px 0;
       border-bottom: 1px solid #f0f0f5;
     }
+
+    /* Flash Messages */
+    .flash-message {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 1.1em;
+    }
+
+    .flash-error {
+      background-color: #ffcccc;
+      color: #cc0000;
+    }
+
+    .flash-success {
+      background-color: #b3ffb3;
+      color: #006600;
+    }
   </style>
 </head>
 <body>
@@ -222,6 +241,8 @@
 
   <!-- Main Content -->
   <div class="container">
+    <!-- Flash Messages -->
+    
     <!-- Balance Card -->
     <div class="balance-card">
       <div class="balance-info">
@@ -236,7 +257,9 @@
 
     <!-- Actions Section -->
     <section class="actions">
+      <a href="/banking/transfer-money"
       <button>Transfer Money</button>
+      </a>
     </section>
 
     <!-- Profile Section -->
