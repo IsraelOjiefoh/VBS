@@ -37,14 +37,15 @@
     }
 
     .transfer-container input[type="number"],
-    .transfer-container input[type="text"] {
-        width: calc(100% - 20px);
-        padding: 10px;
-        margin: 10px 0;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
+.transfer-container input[type="text"],
+.transfer-container input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+        }
 
     .transfer-container input[type="submit"] {
         background-color: #007bff;
@@ -98,7 +99,11 @@
       <label for="amount">Amount:</label>
       <input type="number" id="amount" name="amount" required>
       <br>
-      
+        
+      <label for="receiverAccount">Enter Password :</label>
+      <input type="password" id="password" name="pin" requirerd pattern="[0-9]{1,6}" maxlength="6" 
+inputmode ='numeric'        oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);">
+      <br>
       <input type="submit" value="Transfer">
     </form>
   </div>

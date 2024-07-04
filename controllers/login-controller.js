@@ -32,7 +32,7 @@ exports.postLogin = async (req, res) => {
             
         }
         
-        if (password.length != 10){
+        if (password.length != 6){
             req.flash('error_msg', "Password should be 6 digits.")
             return res.redirect('/auth/login')
         }

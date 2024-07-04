@@ -1,5 +1,8 @@
 const User = require('../models/user');
 
+const bcrypt = require('bcryptjs')
+
+
 exports.getTransferPage = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -23,7 +26,7 @@ exports.getTransferPage = async (req, res) => {
 };
 
 exports.postTransferMoney = async (req, res) => {
-  const { receiverAccount, amount } = req.body;
+  const { receiverAccount, amount, pin } = req.body;
   const userId = req.session.user;
 
   if (!userId) {
@@ -32,6 +35,7 @@ exports.postTransferMoney = async (req, res) => {
   }
 
   try {
+    
     const user = await User.findById(userId);
     if (!user) {
       req.flash('error_msg', 'User not found. Please log in again.');
@@ -43,7 +47,16 @@ exports.postTransferMoney = async (req, res) => {
       req.flash('error_msg', 'Sender account number not available.');
       return res.render('dashboard', { error_msg: 'Sender account number not available.' });
     }
-
+    try{
+    const userPin = await bcrypt.compare( pin, user.pin);
+      
+    if (!userPin) {
+      req.flash('error_msg', 'Invalid pin, please try again.');
+      return res.render('transfer-money', { user, error_msg: 'Invalid pin, please try again.' });
+    }
+    } catch (error ){
+      console.log("Unable to verify pin", error)
+    }
     const transferAmount = Number(amount);
     if (user.balance < transferAmount) {
       req.flash('error_msg', 'Insufficient funds.');
@@ -62,7 +75,7 @@ exports.postTransferMoney = async (req, res) => {
     receiver.balance += transferAmount;
     await receiver.save();
 
-    req.flash('success_msg', 'Funds transferred successfully.');
+    req.flash('success_msg', 'Transfer successful.');
     res.render('dashboard', { user, success_msg: req.flash('success_msg') }); // Corrected: pass success_msg as an object
   } catch (error) {
     console.error('Error transferring funds:', error);
