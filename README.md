@@ -1,6 +1,6 @@
 # Virtual Banking Simulation
 
-Virtual Banking Simulation is a comprehensive virtual banking app built with Node.js, Express, and deployed on Replit. This app simulates basic banking operations, starting with user registration.
+Virtual Banking Simulation is a comprehensive virtual banking app built with Node.js, Express, and deployed on Render. This app simulates basic banking operations, starting with user registration.
 
 ## Features
 
@@ -28,45 +28,8 @@ Virtual Banking Simulation is a comprehensive virtual banking app built with Nod
 4. Start the server
     ```bash
      npm start
-5. Here's a `README.md` file for your Virtual Banking Simulation project:
 
-```markdown
-# Virtual Banking Simulation
-
-Virtual Banking Simulation is a comprehensive virtual banking app built with Node.js, Express, and deployed on Replit. This app simulates basic banking operations, starting with user registration.
-
-## Features
-
-- **User Registration:** Collects first name, last name, date of birth, and a 4-digit PIN.
-- **Validation:** Ensures all fields are correctly filled and the PIN is exactly 4 digits.
-- **Flash Messages:** Displays error and success notifications.
-
-## Tech Stack
-
-- **Backend:** Node.js, Express
-- **Templating Engine:** EJS
-- **Middleware:** body-parser, express-session, connect-flash
-- **Frontend:** HTML5, CSS
-
-## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/virtual-banking-simulation.git
-   cd virtual-banking-simulation
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the server:
-   ```bash
-   npm start
-   ```
-
-4. Open your browser and navigate to `http://localhost:3000`.
+5. Open your browser and navigate to `http://localhost:3000`.
 
 ## File Structure
 
@@ -101,5 +64,5 @@ This project is licensed under the MIT License.
 
 ---
 
-Built with ❤️ using Node.js and Express. Deployed on Replit.
+Built with ❤️ using Node.js and Express. Deployed on Render.
 ```
